@@ -12,7 +12,6 @@ library(here)
 library(readr)
 library(devtools)
 
-git add
 ###Read Data ###
 movies <- read_csv("2023/Hollywood Age Gaps/Data/movies.csv")
 View(movies)
