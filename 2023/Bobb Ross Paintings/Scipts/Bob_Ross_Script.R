@@ -58,3 +58,41 @@ bob_ross_mean <- bob_ross %>%
                     group_by(num_colors,season) %>%
                     summarise(parameters_mean = mean(num_colors, .groups = 'drop'))
 
+in graph
+bob_ross %>%
+  ggplot(aes(x = `season`,  #Label x and y
+             y = `num_colors`)) +
+  geom_hex(size = 3) + 
+  scale_fill_continuous(type = "viridis") + #choosing this color package
+  labs( x = "Season", y = "Number of Colors") + #label axises
+  ggtitle(wrapper(my_title, width = 70)) #Create title
+
+
+#Geom hex but a different gradient
+bob_ross %>%
+  ggplot(aes(x = `season`,  #Label x and y
+             y = `num_colors`)) +
+  geom_hex(size = 1) + 
+  scale_fill_gradient(low = "green",high = "red") + #choosing this color package
+  labs( x = "Season", y = "Number of Colors") + #label axises
+  ggtitle(wrapper(my_title, width = 70)) #Create title
+
+#Geom violin
+bob_ross %>%
+  ggplot(aes(x = `season`,  #Label x and y
+             y = `num_colors`)) +
+  geom_violin(size = 1) + 
+  scale_fill_gradient(low = "green",high = "red") + #choosing this color package
+  labs( x = "Season", y = "Number of Colors") + #label axises
+  ggtitle(wrapper(my_title, width = 70)) #Create title
+
+#geom line. . . this one is weird, looks like secret message
+bob_ross %>%
+  ggplot(aes(x = `season`,  #Label x and y
+             y = `num_colors`)) +
+  geom_line(size = 1) + 
+  scale_fill_gradient(low = "green",high = "red") + #choosing this color package
+  labs( x = "Season", y = "Number of Colors") + #label axises
+  ggtitle(wrapper(my_title, width = 70)) #Create title
+
+
