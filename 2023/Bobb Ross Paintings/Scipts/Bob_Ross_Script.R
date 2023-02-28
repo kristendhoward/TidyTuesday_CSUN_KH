@@ -3,6 +3,7 @@
 # Bobby Ross Paintings
 # Tidy Tuesday February 14, 2023
 #Created on February 15th, 2023
+#Updated on February 21st, 2023
 ###############################
 ##### packages ####
 # devtools::install_github("frankiethull/BobRossColors")
@@ -13,6 +14,7 @@ library(tidyverse)
 library(here)
 library(tidytuesdayR)
 library(viridis)
+library(reactable)
 
 ##### Read Data ####
 bob_ross <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-02-21/bob_ross.csv')
@@ -95,4 +97,33 @@ bob_ross %>%
   labs( x = "Season", y = "Number of Colors") + #label axises
   ggtitle(wrapper(my_title, width = 70)) #Create title
 
+##############################
+# Nyssa introduced a site for different tables
+# We will be learning about reactable today and
+# how to present and group data.
 
+#### packages ####
+library(reactable)
+library(reactablefmtr)
+library(htmltools)
+library(qdap)
+### Data ###
+# We will be using IRIS data()
+reactable(iris) 
+
+iris <- data_bars(iris)
+
+chars <- function(text, spaces = FALSE){
+  require(qdap)
+  if (missing(text)) {
+    text <- readLines("color_hex", warn = FALSE)  # read from clipboard
+  }
+  sum(character_count(text, count.space = spaces), na.rm = TRUE)
+}
+
+bob_color_count <- bob_ross %>% 
+                     group_by(season) %>%
+                    summarise(coloravg = mean(num_colors, na.rm = TRUE))
+photo <- bob_color_count %>%
+          Group = "season"
+  
