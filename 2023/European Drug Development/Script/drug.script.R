@@ -9,9 +9,6 @@ library(here)
 library(tidyverse)
 library(gtable)
 library(gt)
-# This tidy tuesday is inspired by another graph and its use of graphics in presenting data. Most of the credit
-# should go to doehm on Github.
-
 
 # Load in data
 drugs <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-03-14/drugs.csv')
@@ -52,6 +49,6 @@ s%>%
    tab_style(style = list(cell_fill(color = '#ffefb5'), # Same as above
                           cell_text(weight = NULL)), 
                           locations = cells_body(columns = 'Total Number of Drugs'))
-ggsave(here("2023","European Drug Development","Output","drug_status_table.png"), width = 5, height = 4) # Use ggsave to put in output folder
+gtsave(file.path("2023", "European Drug Development", "Output", "drugs.png"))
 
              
