@@ -1,5 +1,5 @@
 # Introduction
-# Observing data regarding the development of european drugs
+# Observing data regarding the development of European drugs
 
 # Load in package
 library(tidytuesdayR)
@@ -7,12 +7,8 @@ library(tidyverse)
 library(ggplot2)
 library(here)
 library(tidyverse)
-library(viridis)
-library(patchwork)
-library(hrbrthemes)
-library(igraph)
-library(ggraph)
-library(colormap)
+library(gtable)
+library(gt)
 # This tidy tuesday is inspired by another graph and its use of graphics in presenting data. Most of the credit
 # should go to doehm on Github.
 
@@ -24,45 +20,38 @@ write_csv(drugs,
           file = here::here("2023","European Drug Development","Data","drugs.csv")) # Save CV in data folder
 
 # Observe Data
-glimpse(drugs)
-Crosstable(drugs$medicine_name)
+glimpse(drugs) #Interested in authorization statuses
 
-# Let's look at a list of drugs whose authorization has been withdrawn and additional
-# monitonring is being done
+# I tried to complete a much complicated graph but it did not work out. I decided
+# to explore the gt package and create a table with the total number of drugs and the
+# corressponding authorization status. Based on the data, a good portion of the european
+# drugs are authorized and are not frequently refused. However, the number of withdrown authorization
+# statuses seems to be particular high. 
 
-#In the past 3 years, 3 drugs have been withdrawn with 3 different
-# active substances.
-lost.drugs <- drugs %>%
-                filter(authorisation_status == "withdrawn",
-                       additional_monitoring == "TRUE",
-                       date_of_opinion>"2020-01-01")
-view(lost.drugs)
+s <- drugs %>%
+  group_by(authorisation_status) %>% # Group by the variable of interest
+  tally() %>% # Use this function to get a total number of drugs in each category
+  rename('Authorization Status' = authorisation_status, # Rename the columns to make it tidy and presentable
+         'Total Number of Drugs' = n)
 
-# Now lets look at drugs that have been approved in the past 3 
-# years
-found.drugs <- drugs %>%
-  filter(authorisation_status == "authorised",
-         additional_monitoring == "TRUE",
-         date_of_opinion>"2020-01-01")
+view(s) # This is looking good, there is only one drug with an NA for a authorization status. 
 
-view(found.drugs)
+# Let's investigate this outlier and practice subsetting skills. I thought the code below
+# would work and it did not. According to s, there is a drug with NA
+NA_drug <- drugs %>%
+           select(authorisation_status, medicine_name) %>%
+           filter(is.na(authorisation_status)) # Use the is.na function to find an NA value.
+view(NA_drug) # Aplidin is the drug with the NA
 
-links=data.frame(
-  source=c(lost.drugs$medicine_name),
-  target=c(found.drugs$medicine_name))
+s%>% 
+  gt() %>% # use gt package for table function. Similar to kable
+  tab_header(title = 'Authorization Status of European Drugs') %>% # Select title
+  tab_style(style = list(cell_fill(color = '#FFC395'), # Use this function to choose color and text options
+                          cell_text(weight = 'bold')),
+                           locations = cells_body(columns = 'Authorization Status'))%>%
+   tab_style(style = list(cell_fill(color = '#ffefb5'), # Same as above
+                          cell_text(weight = NULL)), 
+                          locations = cells_body(columns = 'Total Number of Drugs'))
+ggsave(here("2023","European Drug Development","Output","drug_status_table.png"), width = 5, height = 4) # Use ggsave to put in output folder
 
-mygraph <- graph_from_data_frame(links)
-
-p2 <-  ggraph(mygraph, layout = "linear") + 
-  geom_edge_arc(edge_colour="black", edge_alpha=0.2, edge_width=0.6, fold = TRUE) +
-  geom_node_point( color="pink", size=2) +
-  geom_node_text( aes(label=name), repel = FALSE, size=3, color="#69b356", nudge_y=-1.0, vjust = 1, angle = 65) +
-  theme_void() +
-  theme(
-    legend.position="none",
-    plot.margin=unit(c(0,0,0.4,0), "null"),
-    panel.spacing=unit(c(0,0,3.4,0), "null")
-  ) +
-    expand_limits(x = c(-1.2, 1.2), y = c(-5.6, 1.2)) 
-  ggave(here("European Drug Development","Output","Practice.Arc.Diagram.png"))
-p2
+             
