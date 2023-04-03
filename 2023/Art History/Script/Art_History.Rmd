@@ -1,0 +1,109 @@
+---
+title: "Art History - TidyTuesday"
+author: "Kristen Howard"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+	fig.path = "../Output/",
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+# Load Packages
+```{r}
+
+library(tidytuesdayR)
+library(tidyverse)
+library(here)
+library(ggplot2)
+
+```
+
+
+# Load Data
+```{r cars}
+artists <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-01-17/artists.csv')
+
+```
+
+# Observe Data
+
+```{r pressure, echo=FALSE}
+view(artists)
+summary(artists)
+```
+
+
+Number of black or African american artists present
+
+```{r}
+df2 <- artists %>%
+         select(artist_name,artist_race, artist_ethnicity) %>%
+         filter(artist_race == 'Black or African American') %>%
+         unique() %>%
+         count(artist_race)
+                        
+view(df2) # There are 18 artists present
+
+
+```
+
+Number of white artists presents in data set
+```{r}
+df3 <- artists %>%
+        select(artist_name,artist_race) %>%
+        filter(artist_race == 'White') %>%
+        unique() %>%
+        count(artist_race)
+view(df3)  # There are 350 white artists
+```
+
+Number of Native Hawaiian or Other Pacific Islander
+```{r}
+df4 <- artists %>%
+        select(artist_name,artist_race) %>%
+        filter(artist_race == 'Native Hawaiian or Other Pacific Islander') %>%
+        unique() %>%
+        count(artist_race)
+view(df4) # There are 6 Native Hawaiian or Other Pacific Islander artists
+```
+
+
+# Create a datafrane with the values calculated above
+
+```{r}
+data <- data.frame(
+  category=c("Black or African American", "Native Hawaiian or Other Pacific Islander", "White"),
+  count=c(18, 6, 350)
+)
+```
+
+
+```{r}
+data$fraction <- data$count / sum(data$count)# Calculate percentages
+data$ymax <- cumsum(data$fraction) # Compute the cumulative percentages (top of each rectangle)
+data$ymin <- c(0, head(data$ymax, n=-1))# Compute the bottom of each rectangle
+data$labelPosition <- (data$ymax + data$ymin) / 2 # Compute label position
+data$label <- paste0(data$category, "\n value: ", data$count)# Compute a good label
+
+```
+
+
+
+```{r}
+ggplot(data, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=category)) +
+  geom_rect() +
+  geom_text( x=4, aes(y=labelPosition, label=label, color=category), size=4) + # x here controls label position (inner / outer)
+  scale_fill_brewer(palette=3) +
+  scale_color_brewer(palette=3) +
+  coord_polar(theta="y") +
+  xlim(c(-1, 4)) +
+  theme_void() +
+  theme(legend.position = "none")
+```
+
