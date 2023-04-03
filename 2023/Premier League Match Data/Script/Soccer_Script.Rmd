@@ -34,8 +34,32 @@ view(soccer) # Check data
 summary(soccer)
 ```
 
-##
+## Subset Data
+I am interested in Team Liverpool and referee variance. We will first select for the teams of interest, referee column, and the FTHG column
 ```{r}
+mydata <- soccer %>% # Select data set
+  select(HomeTeam,FTHG,Date, Referee) %>% # choose variables of interest
+  filter(HomeTeam == 'Liverpool') # Filter for team of interest
 
+view(mydata) # always check data
 ```
 
+## Create Plot
+```{r Liverpool boxplot}
+
+mydata %>%
+  ggplot(aes(x = HomeTeam,
+             y = FTHG,
+             color = HomeTeam)) +
+  geom_boxplot(color = '#C8102E') +
+  theme_bw() +
+  theme(plot.background = element_rect(fill = "#00B2A9")) +
+  theme(panel.background = element_rect(fill = "white", colour = "#F6EB61")) +
+  theme(panel.border = element_rect(linetype = "dashed", fill = NA)) +
+  labs(title = 'The Number of Full time Home goals by Each Referee', 
+       color = 'Home Team',
+       y = 'Full Time Home Goals',
+       x = "Home Team") +
+  facet_wrap(~Referee) 
+  
+```
