@@ -34,3 +34,8 @@ view(soccer) # Check data
 summary(soccer)
 ```
 
+##
+```{r}
+
+```
+
