@@ -1,0 +1,36 @@
+---
+title: "Soccer Script"
+author: "Kristen Howard"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+	fig.path = "../Output/",
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+## R Markdown
+
+```{r}
+library(tidytuesdayR)
+library(tidyverse)
+library(here)
+library(ggplot2)
+```
+
+## Load Data
+```{r}
+soccer <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-04-04/soccer21-22.csv')
+```
+
+## Observe Data
+```{r}
+view(soccer) # Check data
+summary(soccer)
+```
+
