@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## R Markdown
+## Load Libraries
 
 ```{r}
 library(tidytuesdayR)
@@ -51,7 +51,7 @@ mydata %>%
   ggplot(aes(x = HomeTeam,
              y = FTHG,
              color = HomeTeam)) +
-  geom_boxplot(color = '#C8102E') +
+  geom_boxplot(color = '#C8102E') + # fun fact, these are the offical hex code colors!
   theme_bw() +
   theme(plot.background = element_rect(fill = "#00B2A9")) +
   theme(panel.background = element_rect(fill = "white", colour = "#F6EB61")) +
